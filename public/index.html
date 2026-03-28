@@ -289,6 +289,108 @@
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+    /* ─── IA Consultora ─── */
+    .ia-hero {
+      background: linear-gradient(135deg, #0F6E56 0%, #1D9E75 100%);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      color: #fff;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .ia-hero-icon {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+    .ia-hero-text h2 { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+    .ia-hero-text p  { font-size: 12px; opacity: 0.85; line-height: 1.4; }
+
+    .ia-quick-btns { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; }
+    .ia-quick-btn {
+      width: 100%; padding: 12px 14px;
+      background: #fff; border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm); cursor: pointer;
+      font-size: 13px; font-family: var(--font);
+      color: var(--gray-900); text-align: left;
+      display: flex; align-items: center; gap: 10px;
+      transition: all 0.15s; font-weight: 500;
+    }
+    .ia-quick-btn:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
+    .ia-quick-btn .btn-icon { font-size: 18px; flex-shrink: 0; }
+    .ia-quick-btn .btn-sub { font-size: 11px; color: var(--gray-400); font-weight: 400; display: block; margin-top: 1px; }
+
+    .ia-chat { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1rem; }
+    .ia-msg {
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      font-size: 14px; line-height: 1.6;
+      max-width: 94%;
+    }
+    .ia-msg.bot {
+      background: #fff;
+      border: 1px solid var(--gray-200);
+      align-self: flex-start;
+    }
+    .ia-msg.user {
+      background: var(--green);
+      color: #fff;
+      align-self: flex-end;
+      font-size: 13px;
+    }
+    .ia-msg.loading {
+      background: #fff;
+      border: 1px solid var(--gray-200);
+      align-self: flex-start;
+      color: var(--gray-400);
+      font-style: italic;
+    }
+    .ia-msg h3 { font-size: 14px; font-weight: 700; margin: 10px 0 4px; color: var(--green-dark); }
+    .ia-msg h3:first-child { margin-top: 0; }
+    .ia-msg ul { padding-left: 16px; margin: 4px 0; }
+    .ia-msg li { margin-bottom: 3px; }
+    .ia-msg strong { color: var(--gray-900); }
+    .ia-msg .tag {
+      display: inline-block; font-size: 11px; font-weight: 600;
+      padding: 2px 8px; border-radius: 10px; margin-right: 4px; margin-bottom: 4px;
+    }
+    .ia-msg .tag.green { background: var(--green-light); color: var(--green-dark); }
+    .ia-msg .tag.red   { background: var(--red-light);   color: var(--red-dark); }
+    .ia-msg .tag.blue  { background: #e6f1fb; color: #185FA5; }
+
+    .ia-input-row {
+      display: flex; gap: 8px;
+      background: #fff;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      padding: 8px 8px 8px 12px;
+      align-items: flex-end;
+    }
+    .ia-input {
+      flex: 1; border: none; background: none;
+      font-size: 14px; font-family: var(--font);
+      color: var(--gray-900); resize: none;
+      outline: none; line-height: 1.5;
+      max-height: 100px; min-height: 22px;
+    }
+    .ia-send {
+      width: 36px; height: 36px; border-radius: var(--radius-sm);
+      background: var(--green); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: background 0.15s;
+    }
+    .ia-send:hover { background: var(--green-dark); }
+    .ia-send svg { width: 16px; height: 16px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .ia-send:disabled { background: var(--gray-200); cursor: not-allowed; }
+
+    .ia-disclaimer {
+      font-size: 11px; color: var(--gray-400);
+      text-align: center; margin-top: 8px; line-height: 1.5;
+    }
+
     /* ─── Install Banner ─── */
     .install-banner {
       display: none;
@@ -380,6 +482,53 @@
     </div>
   </section>
 
+  <!-- IA Consultora -->
+  <section class="page" id="page-ia">
+    <div class="ia-hero">
+      <div class="ia-hero-icon">🤖</div>
+      <div class="ia-hero-text">
+        <h2>Consultora Financeira IA</h2>
+        <p>Análise personalizada baseada nos seus dados reais</p>
+      </div>
+    </div>
+
+    <div class="ia-quick-btns">
+      <button class="ia-quick-btn" onclick="iaQuick('diagnostico')">
+        <span class="btn-icon">📊</span>
+        <span>Diagnóstico completo do mês<span class="btn-sub">Análise de receitas, despesas e saldo</span></span>
+      </button>
+      <button class="ia-quick-btn" onclick="iaQuick('regra5030')">
+        <span class="btn-icon">⚖️</span>
+        <span>Como estou na Regra 50/30/20?<span class="btn-sub">Necessidades, desejos e investimentos</span></span>
+      </button>
+      <button class="ia-quick-btn" onclick="iaQuick('reserva')">
+        <span class="btn-icon">🛡️</span>
+        <span>Reserva de emergência<span class="btn-sub">Quanto preciso guardar?</span></span>
+      </button>
+      <button class="ia-quick-btn" onclick="iaQuick('economia')">
+        <span class="btn-icon">✂️</span>
+        <span>Onde posso economizar?<span class="btn-sub">Identificar gastos desnecessários</span></span>
+      </button>
+      <button class="ia-quick-btn" onclick="iaQuick('investimento')">
+        <span class="btn-icon">📈</span>
+        <span>Estratégia de investimento<span class="btn-sub">O que fazer com o que sobra?</span></span>
+      </button>
+    </div>
+
+    <div class="ia-chat" id="ia-chat"></div>
+
+    <div class="ia-input-row">
+      <textarea class="ia-input" id="ia-input" rows="1"
+        placeholder="Pergunte sobre suas finanças..."
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();iaEnviar()}"
+        oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+      <button class="ia-send" id="ia-send-btn" onclick="iaEnviar()">
+        <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+    <p class="ia-disclaimer">A IA analisa apenas os dados registrados no app. Não substitui consultoria financeira profissional.</p>
+  </section>
+
   <!-- Adicionar -->
   <section class="page" id="page-add">
     <div class="form-card">
@@ -419,6 +568,10 @@
   <button class="nav-item" id="nav-tx" onclick="goTo('tx')" aria-label="Transações">
     <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
     Extrato
+  </button>
+  <button class="nav-item" id="nav-ia" onclick="goTo('ia')" aria-label="IA Consultora">
+    <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 017 7c0 2.5-1.3 4.7-3.3 6L15 20H9l-.7-5C6.3 13.7 5 11.5 5 9a7 7 0 017-7z"/><line x1="9" y1="20" x2="15" y2="20"/></svg>
+    Consultora
   </button>
   <button class="nav-item" id="nav-add" onclick="goTo('add')" aria-label="Adicionar">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
@@ -672,6 +825,158 @@
     renderChart();
     renderCategories();
     renderTransactions();
+  }
+
+
+  /* ─── IA Consultora ─── */
+  const iaHistory = [];
+
+  function iaGetContexto() {
+    const now2 = new Date();
+    const txsAll = transactions;
+    const txsMes = getMonthTxs(viewYear, viewMonth);
+    const income  = txsMes.filter(t=>t.type==='income').reduce((s,t)=>s+t.val,0);
+    const expense = txsMes.filter(t=>t.type==='expense').reduce((s,t)=>s+t.val,0);
+    const balance = income - expense;
+
+    // despesas por categoria
+    const bycat = {};
+    txsMes.filter(t=>t.type==='expense').forEach(t => { bycat[t.cat]=(bycat[t.cat]||0)+t.val; });
+    const catStr = Object.entries(bycat).sort((a,b)=>b[1]-a[1])
+      .map(([c,v])=>`${c}: R$${v.toFixed(2)}`).join(', ') || 'nenhuma';
+
+    // histórico 3 meses
+    const hist = [];
+    for (let i=1; i<=3; i++) {
+      let m=viewMonth-i, y=viewYear;
+      if(m<0){m+=12;y--;}
+      const mt=getMonthTxs(y,m);
+      const mi=mt.filter(t=>t.type==='income').reduce((s,t)=>s+t.val,0);
+      const me=mt.filter(t=>t.type==='expense').reduce((s,t)=>s+t.val,0);
+      const mn=MONTHS[m];
+      hist.push(`${mn}: receita R$${mi.toFixed(2)}, despesa R$${me.toFixed(2)}, saldo R$${(mi-me).toFixed(2)}`);
+    }
+
+    return `DADOS FINANCEIROS DO USUÁRIO (${MONTHS[viewMonth]} ${viewYear}):
+- Receita total: R$${income.toFixed(2)}
+- Despesa total: R$${expense.toFixed(2)}
+- Saldo: R$${balance.toFixed(2)} (${balance>=0?'positivo':'NEGATIVO'})
+- Despesas por categoria: ${catStr}
+- Histórico últimos 3 meses: ${hist.join(' | ')}
+- Total de transações registradas: ${txsAll.length}`;
+  }
+
+  function iaBuildPrompt(tipo) {
+    const prompts = {
+      diagnostico: 'Faça um diagnóstico financeiro completo e detalhado do mês atual. Avalie receitas, despesas, saldo, padrão de gastos e comportamento financeiro. Seja direto e prático.',
+      regra5030: 'Analise meus dados financeiros com base na Regra 50/30/20 (50% necessidades, 30% desejos, 20% investimentos/poupança). Classifique minhas categorias de gastos, diga em qual percentual estou em cada bloco e o que preciso ajustar.',
+      reserva: 'Com base nos meus dados, calcule quanto devo ter de reserva de emergência (3 a 6 meses de despesas). Diga se já tenho condição de começar a guardar e quanto guardar por mês.',
+      economia: 'Analise minhas despesas e aponte onde posso economizar. Identifique gastos potencialmente desnecessários ou excessivos. Dê sugestões práticas e realistas.',
+      investimento: 'Com base no meu saldo mensal e histórico, sugira uma estratégia simples de investimento adequada para quem está começando no Brasil (Tesouro Direto, CDB, etc). Seja prático e educativo.',
+    };
+    return prompts[tipo] || tipo;
+  }
+
+  function iaAddMsg(html, tipo) {
+    const chat = document.getElementById('ia-chat');
+    const div = document.createElement('div');
+    div.className = `ia-msg ${tipo}`;
+    div.innerHTML = html;
+    chat.appendChild(div);
+    div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    return div;
+  }
+
+  function iaFormatResposta(texto) {
+    return texto
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/### (.+)/g, '<h3>$1</h3>')
+      .replace(/## (.+)/g, '<h3>$1</h3>')
+      .replace(/\n- (.+)/g, '<li>$1</li>')
+      .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
+      .replace(/\n\n/g, '<br><br>')
+      .replace(/\n/g, '<br>');
+  }
+
+  async function iaChamarAPI(pergunta) {
+    const contexto = iaGetContexto();
+    const systemPrompt = `Você é uma consultora financeira pessoal especialista em finanças pessoais, planejamento financeiro e construção de patrimônio no Brasil.
+
+Seu objetivo é analisar os dados financeiros reais do usuário e dar conselhos práticos, personalizados e diretos.
+
+Princípios:
+- Use linguagem simples e direta, sem jargões desnecessários
+- Sempre baseie sua análise nos DADOS REAIS fornecidos
+- Seja específico com números (calcule e apresente valores reais)
+- Priorize ações práticas e imediatas
+- Foque em crescimento sustentável e segurança financeira
+- Considere a realidade brasileira (juros, inflação, Tesouro Direto, etc)
+- Use emojis com moderação para tornar a resposta mais legível
+- Formate com títulos e listas quando necessário para facilitar a leitura
+
+${contexto}`;
+
+    const messages = [
+      ...iaHistory.slice(-6),
+      { role: 'user', content: pergunta }
+    ];
+
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages
+      })
+    });
+
+    if (!resp.ok) throw new Error('Erro na API');
+    const data = await resp.json();
+    return data.content.map(b => b.text || '').join('');
+  }
+
+  async function iaQuick(tipo) {
+    const pergunta = iaBuildPrompt(tipo);
+    const labels = {
+      diagnostico: '📊 Diagnóstico completo do mês',
+      regra5030: '⚖️ Como estou na Regra 50/30/20?',
+      reserva: '🛡️ Reserva de emergência',
+      economia: '✂️ Onde posso economizar?',
+      investimento: '📈 Estratégia de investimento',
+    };
+    await iaProcessar(labels[tipo] || pergunta, pergunta);
+  }
+
+  async function iaEnviar() {
+    const input = document.getElementById('ia-input');
+    const texto = input.value.trim();
+    if (!texto) return;
+    input.value = '';
+    input.style.height = 'auto';
+    await iaProcessar(texto, texto);
+  }
+
+  async function iaProcessar(labelUsuario, promptReal) {
+    const btn = document.getElementById('ia-send-btn');
+    btn.disabled = true;
+
+    iaAddMsg(labelUsuario, 'user');
+    const loading = iaAddMsg('Analisando seus dados...', 'loading');
+
+    try {
+      const resposta = await iaChamarAPI(promptReal);
+      loading.remove();
+      iaHistory.push({ role: 'user', content: promptReal });
+      iaHistory.push({ role: 'assistant', content: resposta });
+      iaAddMsg(iaFormatResposta(resposta), 'bot');
+    } catch(e) {
+      loading.remove();
+      iaAddMsg('Não foi possível conectar à IA. Verifique sua conexão e tente novamente.', 'bot');
+    } finally {
+      btn.disabled = false;
+    }
   }
 
   /* ─── Init ─── */
