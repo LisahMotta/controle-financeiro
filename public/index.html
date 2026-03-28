@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#1D9E75" />
   <meta name="description" content="Controle suas receitas e despesas de forma simples" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Finanças" />
   <link rel="manifest" href="/manifest.json" />
@@ -921,20 +922,15 @@ ${contexto}`;
       { role: 'user', content: pergunta }
     ];
 
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    const resp = await fetch('/api/ia', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: systemPrompt,
-        messages
-      })
+      body: JSON.stringify({ system: systemPrompt, messages })
     });
 
     if (!resp.ok) throw new Error('Erro na API');
     const data = await resp.json();
-    return data.content.map(b => b.text || '').join('');
+    return data.text || '';
   }
 
   async function iaQuick(tipo) {

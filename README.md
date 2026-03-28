@@ -1,72 +1,47 @@
-# 💰 Controle Financeiro — PWA
-
-App de controle financeiro pessoal, Progressive Web App, pronto para deploy no Vercel.
-
-## Funcionalidades
-
-- Registrar receitas e despesas por categoria
-- Navegar por mês
-- Gráfico comparativo dos últimos 6 meses
-- Distribuição de despesas por categoria
-- Extrato filtrável
-- Dados salvos no localStorage (sem backend necessário)
-- Instalável como app (PWA) no celular e desktop
-- Funciona offline após primeiro acesso
+# 💰 Controle Financeiro — PWA com IA
 
 ## Estrutura
-
 ```
 financeiro/
+├── api/
+│   └── ia.js          ← proxy seguro para Anthropic (Vercel Function)
 ├── public/
-│   ├── index.html        ← app completo
-│   ├── manifest.json     ← configuração PWA
-│   ├── sw.js             ← service worker (cache offline)
+│   ├── index.html
+│   ├── manifest.json
+│   ├── sw.js
 │   └── icons/
-│       ├── icon-192.png
-│       └── icon-512.png
-├── vercel.json           ← configuração do Vercel
-└── README.md
+├── vercel.json
+└── package.json
 ```
 
-## Deploy no Vercel
+## Deploy
 
-### Opção 1 — Via GitHub (recomendado)
-
-1. Crie um repositório no GitHub e envie este projeto:
-   ```bash
-   git init
-   git add .
-   git commit -m "primeiro commit"
-   git remote add origin https://github.com/SEU_USUARIO/controle-financeiro.git
-   git push -u origin main
-   ```
-
-2. Acesse [vercel.com](https://vercel.com) → **Add New Project**
-
-3. Importe o repositório do GitHub
-
-4. Nas configurações do projeto, defina:
-   - **Framework Preset:** Other
-   - **Root Directory:** `./`
-   - **Output Directory:** `public`
-   - **Build Command:** *(deixe em branco)*
-
-5. Clique em **Deploy** ✅
-
-### Opção 2 — Via Vercel CLI
-
+### 1. Suba para o GitHub
 ```bash
-npm i -g vercel
-vercel login
-vercel --prod
+git add .
+git commit -m "adiciona IA consultora"
+git push
 ```
-Quando perguntar o diretório de saída, informe: `public`
 
----
+### 2. Importe no Vercel
+- Framework: **Other**
+- Output Directory: *(em branco)*
+- Build Command: *(em branco)*
 
-## Instalar como PWA
+### 3. ⚠️ Configure a variável de ambiente (IA não funciona sem isso)
 
-Após o deploy, acesse o link no celular (Chrome/Safari) e:
-- **Android:** aparece o banner "Adicionar à tela inicial" automaticamente
-- **iOS:** toque em Compartilhar → "Adicionar à Tela de Início"
-- **Desktop Chrome:** clique no ícone de instalação na barra de endereço
+No painel do Vercel → **Settings → Environment Variables → Add New**:
+
+| Name | Value |
+|------|-------|
+| `ANTHROPIC_API_KEY` | `sk-ant-...` (sua chave) |
+
+Marque: Production + Preview + Development
+
+Depois: **Deployments → Redeploy**
+
+> Sua chave: https://console.anthropic.com/settings/keys
+
+### 4. Instalar como PWA
+- Android: banner automático
+- iOS: Compartilhar → "Adicionar à Tela de Início"
