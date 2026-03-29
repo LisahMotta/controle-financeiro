@@ -901,36 +901,22 @@
 
   async function iaChamarAPI(pergunta) {
     const contexto = iaGetContexto();
-    const systemPrompt = `Você é uma consultora financeira pessoal especialista em finanças pessoais, planejamento financeiro e construção de patrimônio no Brasil.
-
-Seu objetivo é analisar os dados financeiros reais do usuário e dar conselhos práticos, personalizados e diretos.
-
-Princípios:
-- Use linguagem simples e direta, sem jargões desnecessários
-- Sempre baseie sua análise nos DADOS REAIS fornecidos
-- Seja específico com números (calcule e apresente valores reais)
-- Priorize ações práticas e imediatas
-- Foque em crescimento sustentável e segurança financeira
-- Considere a realidade brasileira (juros, inflação, Tesouro Direto, etc)
-- Use emojis com moderação para tornar a resposta mais legível
-- Formate com títulos e listas quando necessário para facilitar a leitura
-
-${contexto}`;
+    const system = `Você é uma consultora financeira pessoal especialista em finanças no Brasil. Analise os dados reais do usuário e dê conselhos práticos, diretos e específicos. Use linguagem simples, emojis com moderação e formate com títulos quando necessário.\n\n${contexto}`;
 
     const messages = [
-      ...iaHistory.slice(-6),
-      { role: 'user', content: pergunta }
+      ...iaHistory.slice(-4).filter(m => m.role && m.content),
+      { role: 'user', content: String(pergunta).slice(0, 2000) }
     ];
 
     const resp = await fetch('/api/ia', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ system: systemPrompt, messages })
+      body: JSON.stringify({ system, messages })
     });
 
     if (!resp.ok) {
       let detalhe = '';
-      try { const d = await resp.json(); detalhe = d.error || d.detalhe || ''; } catch(e){}
+      try { const d = await resp.json(); detalhe = d.error || ''; } catch(e) {}
       throw new Error(`Erro ${resp.status}: ${detalhe}`);
     }
     const data = await resp.json();
