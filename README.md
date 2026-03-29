@@ -19,7 +19,7 @@ financeiro/
 ### 1. Suba para o GitHub
 ```bash
 git add .
-git commit -m "adiciona IA consultora"
+git commit -m "adiciona IA consultora com Groq"
 git push
 ```
 
@@ -34,13 +34,19 @@ No painel do Vercel → **Settings → Environment Variables → Add New**:
 
 | Name | Value |
 |------|-------|
-| `ANTHROPIC_API_KEY` | `sk-ant-...` (sua chave) |
+| `GROQ_API_KEY` | `gsk_...` (sua chave gratuita) |
 
 Marque: Production + Preview + Development
 
 Depois: **Deployments → Redeploy**
 
-> Sua chave: https://console.anthropic.com/settings/keys
+#### 📋 Como obter a chave Groq (100% gratuito):
+1. Acesse: https://console.groq.com/keys
+2. Clique em **"Create API Key"**
+3. Copie a chave (começa com `gsk_`)
+4. Cole no Vercel
+
+> ✅ Groq é gratuito com limite generoso: **5.000 requisições/dia**
 
 ### 4. Instalar como PWA
 - Android: banner automático

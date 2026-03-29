@@ -8,8 +8,8 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Método não permitido' });
 
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) return res.status(500).json({ error: 'ANTHROPIC_API_KEY não configurada' });
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) return res.status(500).json({ error: 'GROQ_API_KEY não configurada' });
 
   try {
     // Garante que o body está parseado
@@ -17,21 +17,24 @@ module.exports = async function handler(req, res) {
     if (typeof body === 'string') body = JSON.parse(body);
 
     const system   = (body && typeof body.system === 'string') ? body.system : '';
-    const messages = (body && Array.isArray(body.messages) && body.messages.length > 0)
+    let messages = (body && Array.isArray(body.messages) && body.messages.length > 0)
       ? body.messages
       : [{ role: 'user', content: 'Olá' }]; // fallback seguro
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    // Adiciona system prompt como primeira mensagem se houver
+    if (system) {
+      messages = [{ role: 'system', content: system }, ...messages];
+    }
+
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
+        'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
+        model: 'mixtral-8x7b-32768',
         max_tokens: 1024,
-        system,
         messages,
       }),
     });
@@ -45,7 +48,7 @@ module.exports = async function handler(req, res) {
     }
 
     const data = JSON.parse(rawText);
-    const text = data.content.map(b => b.text || '').join('');
+    const text = data.choices[0].message.content || '';
     return res.status(200).json({ text });
 
   } catch (err) {
