@@ -2,7 +2,6 @@
   "name": "controle-financeiro",
   "version": "1.0.0",
   "description": "App de controle financeiro pessoal com IA",
-  "type": "module",
   "scripts": {
     "start": "npx serve public -l 3000"
   },

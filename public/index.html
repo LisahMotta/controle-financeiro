@@ -928,7 +928,11 @@ ${contexto}`;
       body: JSON.stringify({ system: systemPrompt, messages })
     });
 
-    if (!resp.ok) throw new Error('Erro na API');
+    if (!resp.ok) {
+      let detalhe = '';
+      try { const d = await resp.json(); detalhe = d.error || d.detalhe || ''; } catch(e){}
+      throw new Error(`Erro ${resp.status}: ${detalhe}`);
+    }
     const data = await resp.json();
     return data.text || '';
   }
@@ -969,7 +973,7 @@ ${contexto}`;
       iaAddMsg(iaFormatResposta(resposta), 'bot');
     } catch(e) {
       loading.remove();
-      iaAddMsg('Não foi possível conectar à IA. Verifique sua conexão e tente novamente.', 'bot');
+      iaAddMsg(`⚠️ ${e.message || 'Erro desconhecido. Verifique sua conexão.'}`, 'bot');
     } finally {
       btn.disabled = false;
     }
