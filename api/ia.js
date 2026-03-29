@@ -9,19 +9,27 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Método não permitido' });
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
-
-  // Debug: retorna info sem expor a chave
   if (!apiKey) {
-    return res.status(500).json({
-      error: 'ANTHROPIC_API_KEY não encontrada',
-      dica: 'Adicione a variável no Vercel > Settings > Environment Variables e faça Redeploy'
-    });
+    return res.status(500).json({ error: 'ANTHROPIC_API_KEY não configurada' });
   }
 
-  const { system, messages } = req.body || {};
+  // Vercel parseia o body automaticamente se Content-Type for application/json
+  // mas vamos garantir que funciona mesmo se vier como string
+  let body = req.body;
+  if (typeof body === 'string') {
+    try { body = JSON.parse(body); } catch(e) {
+      return res.status(400).json({ error: 'Body inválido: não é JSON' });
+    }
+  }
 
-  if (!messages || !Array.isArray(messages)) {
-    return res.status(400).json({ error: 'Campo "messages" ausente ou inválido' });
+  if (!body || typeof body !== 'object') {
+    return res.status(400).json({ error: 'Body ausente ou inválido' });
+  }
+
+  const { system, messages } = body;
+
+  if (!messages || !Array.isArray(messages) || messages.length === 0) {
+    return res.status(400).json({ error: 'Campo "messages" ausente, vazio ou não é array' });
   }
 
   try {
@@ -40,25 +48,21 @@ module.exports = async function handler(req, res) {
       }),
     });
 
-    const text = await response.text();
+    const rawText = await response.text();
 
     if (!response.ok) {
       return res.status(response.status).json({
         error: 'Erro da API Anthropic',
         status: response.status,
-        detalhe: text
+        detalhe: rawText
       });
     }
 
-    const data = JSON.parse(text);
+    const data = JSON.parse(rawText);
     const result = data.content.map(b => b.text || '').join('');
     return res.status(200).json({ text: result });
 
   } catch (err) {
-    return res.status(500).json({
-      error: 'Erro interno',
-      mensagem: err.message,
-      stack: err.stack
-    });
+    return res.status(500).json({ error: err.message });
   }
 };
