@@ -25,7 +25,7 @@ module.exports = async function handler(req, res) {
     }
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 25000);
+    const timeout = setTimeout(() => controller.abort(), 8000);
 
     let response;
     try {
@@ -37,7 +37,7 @@ module.exports = async function handler(req, res) {
         },
         body: JSON.stringify({
           model: 'llama-3.1-8b-instant',
-          max_tokens: 700,
+          max_tokens: 500,
           temperature: 0.7,
           messages,
         }),
@@ -61,7 +61,7 @@ module.exports = async function handler(req, res) {
 
   } catch (err) {
     if (err.name === 'AbortError') {
-      return res.status(504).json({ error: 'A IA demorou muito para responder. Tente novamente.' });
+      return res.status(504).json({ error: 'A IA demorou muito. Tente novamente.' });
     }
     return res.status(500).json({ error: err.message });
   }
