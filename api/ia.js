@@ -9,35 +9,43 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Método não permitido' });
 
   const apiKey = process.env.GROQ_API_KEY;
-  if (!apiKey) return res.status(500).json({ error: 'GROQ_API_KEY não configurada' });
+  if (!apiKey) return res.status(500).json({ error: 'GROQ_API_KEY não configurada no Vercel' });
 
   try {
-    // Garante que o body está parseado
     let body = req.body;
     if (typeof body === 'string') body = JSON.parse(body);
 
-    const system   = (body && typeof body.system === 'string') ? body.system : '';
+    const system = (body && typeof body.system === 'string') ? body.system : '';
     let messages = (body && Array.isArray(body.messages) && body.messages.length > 0)
       ? body.messages
-      : [{ role: 'user', content: 'Olá' }]; // fallback seguro
+      : [{ role: 'user', content: 'Olá' }];
 
-    // Adiciona system prompt como primeira mensagem se houver
     if (system) {
       messages = [{ role: 'system', content: system }, ...messages];
     }
 
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        max_tokens: 1024,
-        messages,
-      }),
-    });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 25000);
+
+    let response;
+    try {
+      response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: 'llama-3.1-8b-instant',
+          max_tokens: 700,
+          temperature: 0.7,
+          messages,
+        }),
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
 
     const rawText = await response.text();
 
@@ -48,10 +56,13 @@ module.exports = async function handler(req, res) {
     }
 
     const data = JSON.parse(rawText);
-    const text = data.choices[0].message.content || '';
+    const text = data.choices?.[0]?.message?.content || '';
     return res.status(200).json({ text });
 
   } catch (err) {
+    if (err.name === 'AbortError') {
+      return res.status(504).json({ error: 'A IA demorou muito para responder. Tente novamente.' });
+    }
     return res.status(500).json({ error: err.message });
   }
 };
