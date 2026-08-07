@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#1D9E75" />
+  <meta name="theme-color" content="#1E3A5F" />
   <meta name="description" content="Controle suas receitas e despesas de forma simples" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -11,35 +11,49 @@
   <meta name="apple-mobile-web-app-title" content="Finanças" />
   <link rel="manifest" href="/manifest.json" />
   <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <title>Controle Financeiro</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --green:#1D9E75; --green-light:#E1F5EE; --green-dark:#0F6E56;
-      --red:#D85A30; --red-light:#FAECE7; --red-dark:#993C1D;
-      --blue:#378ADD; --blue-light:#EAF2FC;
-      --gray-50:#f8f8f6; --gray-100:#f0efea; --gray-200:#e4e3dc;
-      --gray-400:#888780; --gray-600:#5f5e5a; --gray-900:#1a1a18;
+      /* Marca (ações neutras: navegação, botões, IA) */
+      --primary:#1E3A5F; --primary-dark:#142943; --primary-light:#E8EEF4;
+      /* Semântica financeira (positivo / negativo / pendente) */
+      --green:#059669; --green-light:#ECFDF5; --green-dark:#047857;
+      --red:#DC2626; --red-light:#FEF2F2; --red-dark:#B91C1C;
+      --blue:#2563EB; --blue-light:#E6F1FB; --blue-dark:#185FA5;
+      /* Neutros */
+      --gray-50:#F8FAFC; --gray-100:#F1F5F9; --gray-200:#E2E8F0;
+      --gray-400:#64748B; --gray-600:#475569; --gray-900:#0F172A;
       --radius-sm:8px; --radius-md:12px; --radius-lg:16px;
-      --shadow-sm:0 1px 4px rgba(0,0,0,0.06); --shadow-md:0 4px 16px rgba(0,0,0,0.10);
-      --font:'Segoe UI',system-ui,-apple-system,sans-serif; --nav-h:60px;
+      --shadow-sm:0 1px 2px rgba(15,23,42,0.05), 0 1px 3px rgba(15,23,42,0.05);
+      --shadow-md:0 4px 16px rgba(15,23,42,0.12);
+      --font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; --nav-h:60px;
+      --focus-ring: 0 0 0 3px rgba(30,58,95,0.18);
+    }
+    a:focus-visible, button:focus-visible, input:focus-visible,
+    select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+      outline: none; box-shadow: var(--focus-ring);
     }
     body { font-family:var(--font); background:var(--gray-50); color:var(--gray-900); min-height:100dvh; padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom)); }
 
     /* Topbar */
     .topbar { position:sticky; top:0; z-index:100; background:#fff; border-bottom:1px solid var(--gray-200); padding:0 1rem; height:56px; display:flex; align-items:center; justify-content:space-between; }
     .topbar-logo { display:flex; align-items:center; gap:8px; }
-    .topbar-logo .icon { width:32px; height:32px; border-radius:var(--radius-sm); background:var(--green); color:#fff; font-size:13px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+    .topbar-logo .icon { width:32px; height:32px; border-radius:var(--radius-sm); background:var(--primary); color:#fff; font-size:13px; font-weight:700; display:flex; align-items:center; justify-content:center; }
     .topbar-logo span { font-size:15px; font-weight:600; }
-    .month-nav { display:flex; align-items:center; gap:8px; }
-    .month-nav button { width:32px; height:32px; border:1px solid var(--gray-200); border-radius:var(--radius-sm); background:none; cursor:pointer; font-size:16px; color:var(--gray-600); display:flex; align-items:center; justify-content:center; }
-    .month-nav button:hover { background:var(--gray-100); }
-    .month-nav span { font-size:13px; font-weight:500; min-width:110px; text-align:center; }
+    .month-nav { display:flex; align-items:center; gap:6px; }
+    .month-nav button { width:36px; height:36px; border:1px solid var(--gray-200); border-radius:var(--radius-sm); background:none; cursor:pointer; color:var(--gray-600); display:flex; align-items:center; justify-content:center; transition:background 0.15s,color 0.15s; }
+    .month-nav button svg { width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+    .month-nav button:hover { background:var(--gray-100); color:var(--primary); }
+    .month-nav span { font-size:13px; font-weight:600; min-width:108px; text-align:center; }
 
     /* Bottom Nav */
     .bottom-nav { position:fixed; bottom:0; left:0; right:0; z-index:100; height:calc(var(--nav-h) + env(safe-area-inset-bottom)); padding-bottom:env(safe-area-inset-bottom); background:#fff; border-top:1px solid var(--gray-200); display:flex; }
     .nav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; background:none; border:none; cursor:pointer; color:var(--gray-400); font-size:10px; font-family:var(--font); transition:color 0.15s; }
-    .nav-item.active { color:var(--green); }
+    .nav-item.active { color:var(--primary); box-shadow: inset 0 2px 0 var(--primary); }
     .nav-item svg { width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
 
     /* Pages */
@@ -117,8 +131,18 @@
     .tx-amount.exp { color:var(--red); }
     .tx-amount.pending-val { opacity:0.5; }
     .tx-date { font-size:11px; color:var(--gray-400); margin-top:1px; }
-    .tx-del { background:none; border:none; cursor:pointer; color:var(--gray-200); font-size:18px; padding:4px 6px; border-radius:4px; flex-shrink:0; transition:color 0.15s; }
-    .tx-del:hover { color:var(--red); }
+    .tx-actions { display:flex; align-items:center; gap:4px; flex-shrink:0; }
+    .tx-pay-btn {
+      width:32px; height:32px; border-radius:50%;
+      border:1px solid var(--green); background:#fff; color:var(--green);
+      cursor:pointer; display:flex; align-items:center; justify-content:center;
+      flex-shrink:0; padding:0; transition:all 0.15s;
+    }
+    .tx-pay-btn svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
+    .tx-pay-btn:hover { background:var(--green); color:#fff; }
+    .tx-del { width:32px; height:32px; background:none; border:none; cursor:pointer; color:var(--gray-400); border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:background 0.15s,color 0.15s; }
+    .tx-del svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; }
+    .tx-del:hover, .tx-del:active { background:var(--red-light); color:var(--red-dark); }
 
     /* Add Form */
     .form-card { background:#fff; border-radius:var(--radius-md); padding:1.25rem; box-shadow:var(--shadow-sm); }
@@ -131,9 +155,9 @@
     .form-group { display:flex; flex-direction:column; gap:5px; }
     .form-label { font-size:12px; font-weight:500; color:var(--gray-600); }
     .form-input { padding:9px 11px; border:1px solid var(--gray-200); border-radius:var(--radius-sm); font-size:14px; background:var(--gray-50); color:var(--gray-900); font-family:var(--font); transition:border-color 0.15s; -webkit-appearance:none; }
-    .form-input:focus { outline:none; border-color:var(--green); background:#fff; }
-    .btn-primary { width:100%; padding:12px; background:var(--green); color:#fff; border:none; border-radius:var(--radius-sm); font-size:15px; font-weight:600; font-family:var(--font); cursor:pointer; transition:background 0.15s,transform 0.1s; }
-    .btn-primary:hover { background:var(--green-dark); }
+    .form-input:focus { outline:none; border-color:var(--primary); background:#fff; box-shadow:var(--focus-ring); }
+    .btn-primary { width:100%; padding:13px; min-height:44px; background:var(--primary); color:#fff; border:none; border-radius:var(--radius-sm); font-size:15px; font-weight:600; font-family:var(--font); cursor:pointer; transition:background 0.15s,transform 0.1s; }
+    .btn-primary:hover { background:var(--primary-dark); }
     .btn-primary:active { transform:scale(0.98); }
 
     /* Status toggle no formulário */
@@ -150,39 +174,41 @@
     .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
     /* IA */
-    .ia-hero { background:linear-gradient(135deg,#0F6E56 0%,#1D9E75 100%); border-radius:var(--radius-md); padding:1.25rem; color:#fff; margin-bottom:1rem; display:flex; align-items:center; gap:14px; }
+    .ia-hero { background:linear-gradient(135deg,var(--primary-dark) 0%,var(--primary) 60%,var(--blue) 100%); border-radius:var(--radius-md); padding:1.25rem; color:#fff; margin-bottom:1rem; display:flex; align-items:center; gap:14px; }
     .ia-hero-icon { width:48px; height:48px; border-radius:50%; background:rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
     .ia-hero-text h2 { font-size:15px; font-weight:700; margin-bottom:3px; }
     .ia-hero-text p  { font-size:12px; opacity:0.85; line-height:1.4; }
     .ia-quick-btns { display:flex; flex-direction:column; gap:8px; margin-bottom:1rem; }
     .ia-quick-btn { width:100%; padding:12px 14px; background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius-sm); cursor:pointer; font-size:13px; font-family:var(--font); color:var(--gray-900); text-align:left; display:flex; align-items:center; gap:10px; transition:all 0.15s; font-weight:500; }
-    .ia-quick-btn:hover { border-color:var(--green); color:var(--green); background:var(--green-light); }
+    .ia-quick-btn:hover { border-color:var(--primary); color:var(--primary); background:var(--primary-light); }
     .ia-quick-btn .btn-icon { font-size:18px; flex-shrink:0; }
     .ia-quick-btn .btn-sub { font-size:11px; color:var(--gray-400); font-weight:400; display:block; margin-top:1px; }
     .ia-chat { display:flex; flex-direction:column; gap:10px; margin-bottom:1rem; }
     .ia-msg { padding:12px 14px; border-radius:var(--radius-md); font-size:14px; line-height:1.6; max-width:94%; }
     .ia-msg.bot { background:#fff; border:1px solid var(--gray-200); align-self:flex-start; }
-    .ia-msg.user { background:var(--green); color:#fff; align-self:flex-end; font-size:13px; }
+    .ia-msg.user { background:var(--primary); color:#fff; align-self:flex-end; font-size:13px; }
     .ia-msg.loading { background:#fff; border:1px solid var(--gray-200); align-self:flex-start; color:var(--gray-400); font-style:italic; }
-    .ia-msg h3 { font-size:14px; font-weight:700; margin:10px 0 4px; color:var(--green-dark); }
+    .ia-msg h3 { font-size:14px; font-weight:700; margin:10px 0 4px; color:var(--primary); }
     .ia-msg h3:first-child { margin-top:0; }
     .ia-msg ul { padding-left:16px; margin:4px 0; }
     .ia-msg li { margin-bottom:3px; }
     .ia-msg strong { color:var(--gray-900); }
     .ia-input-row { display:flex; gap:8px; background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius-md); padding:8px 8px 8px 12px; align-items:flex-end; }
     .ia-input { flex:1; border:none; background:none; font-size:14px; font-family:var(--font); color:var(--gray-900); resize:none; outline:none; line-height:1.5; max-height:100px; min-height:22px; }
-    .ia-send { width:36px; height:36px; border-radius:var(--radius-sm); background:var(--green); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:background 0.15s; }
-    .ia-send:hover { background:var(--green-dark); }
+    .ia-send { width:36px; height:36px; border-radius:var(--radius-sm); background:var(--primary); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:background 0.15s; }
+    .ia-send:hover { background:var(--primary-dark); }
     .ia-send svg { width:16px; height:16px; stroke:#fff; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
     .ia-send:disabled { background:var(--gray-200); cursor:not-allowed; }
     .ia-disclaimer { font-size:11px; color:var(--gray-400); text-align:center; margin-top:8px; line-height:1.5; }
 
     /* Install Banner */
-    .install-banner { display:none; position:fixed; bottom:calc(var(--nav-h)+8px+env(safe-area-inset-bottom)); left:1rem; right:1rem; background:var(--green); color:#fff; border-radius:var(--radius-md); padding:12px 16px; box-shadow:var(--shadow-md); z-index:200; align-items:center; gap:10px; }
+    .install-banner { display:none; position:fixed; bottom:calc(var(--nav-h)+8px+env(safe-area-inset-bottom)); left:1rem; right:1rem; background:var(--primary); color:#fff; border-radius:var(--radius-md); padding:12px 12px 12px 16px; box-shadow:var(--shadow-md); z-index:200; align-items:center; gap:10px; }
     .install-banner.visible { display:flex; }
     .install-banner p { flex:1; font-size:13px; font-weight:500; }
-    .install-banner .btn-install { background:#fff; color:var(--green); border:none; border-radius:var(--radius-sm); padding:7px 14px; font-size:13px; font-weight:600; cursor:pointer; font-family:var(--font); }
-    .install-banner .btn-close { background:none; border:none; color:rgba(255,255,255,0.7); font-size:20px; cursor:pointer; padding:0 4px; line-height:1; }
+    .install-banner .btn-install { background:#fff; color:var(--primary); border:none; border-radius:var(--radius-sm); padding:8px 14px; font-size:13px; font-weight:600; cursor:pointer; font-family:var(--font); min-height:36px; }
+    .install-banner .btn-close { width:32px; height:32px; background:none; border:none; color:rgba(255,255,255,0.8); cursor:pointer; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:background 0.15s; }
+    .install-banner .btn-close:hover { background:rgba(255,255,255,0.15); }
+    .install-banner .btn-close svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; }
   </style>
 </head>
 <body>
@@ -193,9 +219,13 @@
     <span>Finanças</span>
   </div>
   <nav class="month-nav">
-    <button onclick="changeMonth(-1)" aria-label="Mês anterior">&#8249;</button>
+    <button onclick="changeMonth(-1)" aria-label="Mês anterior">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
     <span id="month-label"></span>
-    <button onclick="changeMonth(1)" aria-label="Próximo mês">&#8250;</button>
+    <button onclick="changeMonth(1)" aria-label="Próximo mês">
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
   </nav>
 </header>
 
@@ -330,7 +360,9 @@
 <div class="install-banner" id="install-banner">
   <p>Instale o app para acesso rápido!</p>
   <button class="btn-install" id="btn-install-confirm">Instalar</button>
-  <button class="btn-close" onclick="dismissInstall()">×</button>
+  <button class="btn-close" onclick="dismissInstall()" aria-label="Fechar">
+    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -399,6 +431,15 @@
     t.status = t.status === 'done' ? 'pending' : 'done';
     save(); render(); renderTransactions();
     showToast(t.status==='done' ? (t.type==='income'?'✅ Marcado como recebido':'✅ Marcado como pago') : '⏳ Marcado como pendente');
+  }
+
+  /* ─── Botão dedicado: marcar como pago/recebido (sem alternar de volta) ─── */
+  function markAsPaid(id) {
+    const t = transactions.find(t=>t.id===id);
+    if (!t || t.status === 'done') return;
+    t.status = 'done';
+    save(); render(); renderTransactions();
+    showToast(t.type==='income' ? '✅ Marcado como recebido' : '✅ Marcado como pago');
   }
 
   /* ─── Navigation ─── */
@@ -560,7 +601,14 @@
           <div class="${amtClass}">${isIncome?'+':'−'}${fmtBRL(t.val)}</div>
           <div class="tx-date">${ds}</div>
         </div>
-        <button class="tx-del" onclick="deleteTransaction(${t.id})" aria-label="Remover">×</button>
+        <div class="tx-actions">
+          ${isPending ? `<button class="tx-pay-btn" onclick="markAsPaid(${t.id})" title="Marcar como ${isIncome?'recebido':'pago'}" aria-label="Marcar como ${isIncome?'recebido':'pago'}">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>` : ''}
+          <button class="tx-del" onclick="deleteTransaction(${t.id})" aria-label="Remover transação">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
       </div>`;
     }).join('');
   }
