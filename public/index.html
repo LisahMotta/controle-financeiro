@@ -242,6 +242,14 @@
     .tx-status.pending { background: var(--gray-100); color: var(--gray-600); }
     .tx-status.pending.exp { background: var(--red-light); color: var(--red-dark); }
     .tx-status.pending.inc { background: #e6f1fb; color: #185FA5; }
+    .tx-pay-btn {
+      width: 26px; height: 26px; border-radius: 50%;
+      border: 1px solid var(--green); background: #fff; color: var(--green);
+      font-size: 13px; font-weight: 700; line-height: 1; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; padding: 0; transition: all 0.15s;
+    }
+    .tx-pay-btn:hover { background: var(--green); color: #fff; }
 
     /* ─── Add Form ─── */
     .form-card {
@@ -783,6 +791,16 @@
     showToast(msg);
   }
 
+  /* ─── Botão dedicado: marcar como pago/recebido ─── */
+  function markAsPaid(id) {
+    const t = transactions.find(x => x.id === id);
+    if (!t || t.status === 'done') return;
+    t.status = 'done';
+    save();
+    render();
+    showToast(t.type === 'income' ? '✅ Marcado como recebido' : '✅ Marcado como pago');
+  }
+
   /* ─── Render ─── */
   function renderSummary() {
     const txs    = getMonthTxs(viewYear, viewMonth);
@@ -876,6 +894,7 @@
           <div class="tx-date">${ds}</div>
         </div>
         <button class="tx-status ${stClass}" onclick="toggleStatus(${t.id})" title="Clique para alternar status">${stLabel}</button>
+        ${!isDone ? `<button class="tx-pay-btn" onclick="markAsPaid(${t.id})" title="Marcar como ${isIncome?'recebido':'pago'}" aria-label="Marcar como ${isIncome?'recebido':'pago'}">✓</button>` : ''}
         <button class="tx-del" onclick="deleteTransaction(${t.id})" aria-label="Remover">×</button>
       </div>`;
     }).join('');
