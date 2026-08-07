@@ -231,6 +231,17 @@
       opacity: 0; transition: opacity 0.15s;
     }
     .tx-item:hover .tx-del { opacity: 1; }
+    .tx-status {
+      font-size: 10px; font-weight: 600; padding: 3px 8px;
+      border-radius: 10px; border: none; cursor: pointer;
+      font-family: var(--font); white-space: nowrap; flex-shrink: 0;
+      transition: filter 0.15s;
+    }
+    .tx-status:hover { filter: brightness(0.95); }
+    .tx-status.done { background: var(--green-light); color: var(--green-dark); }
+    .tx-status.pending { background: var(--gray-100); color: var(--gray-600); }
+    .tx-status.pending.exp { background: var(--red-light); color: var(--red-dark); }
+    .tx-status.pending.inc { background: #e6f1fb; color: #185FA5; }
 
     /* ─── Add Form ─── */
     .form-card {
@@ -248,6 +259,16 @@
     }
     .type-btn.active.inc { background: var(--green-light); color: var(--green-dark); }
     .type-btn.active.exp { background: var(--red-light); color: var(--red-dark); }
+
+    .status-toggle { display: flex; border: 1px solid var(--gray-200); border-radius: var(--radius-sm); overflow: hidden; margin-bottom: 1rem; }
+    .status-btn {
+      flex: 1; padding: 9px; border: none; background: none;
+      cursor: pointer; font-size: 13px; font-family: var(--font);
+      color: var(--gray-600); font-weight: 500;
+      transition: all 0.15s;
+    }
+    .status-btn.active.done    { background: var(--green-light); color: var(--green-dark); }
+    .status-btn.active.pending { background: var(--gray-100);    color: var(--gray-600); }
 
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1rem; }
     @media(max-width: 420px) { .form-grid { grid-template-columns: 1fr; } }
@@ -477,6 +498,7 @@
       <button class="chip active" onclick="setFilter('all', this)">Todas</button>
       <button class="chip" onclick="setFilter('income', this)">Receitas</button>
       <button class="chip" onclick="setFilter('expense', this)">Despesas</button>
+      <button class="chip" onclick="setFilter('pending', this)">Pendentes</button>
     </div>
     <div class="tx-list" id="tx-list">
       <div class="empty">Nenhuma transação encontrada</div>
@@ -536,6 +558,13 @@
       <div class="type-toggle">
         <button class="type-btn active inc" id="btn-inc" onclick="setType('income')">+ Receita</button>
         <button class="type-btn exp" id="btn-exp" onclick="setType('expense')">− Despesa</button>
+      </div>
+      <div class="form-group" style="margin-bottom: 1rem">
+        <label class="form-label" id="status-label">Status</label>
+        <div class="status-toggle">
+          <button class="status-btn active done" id="st-done" onclick="setStatus('done')">✅ Pago</button>
+          <button class="status-btn" id="st-pending" onclick="setStatus('pending')">⏳ A pagar</button>
+        </div>
       </div>
       <div class="form-grid">
         <div class="form-group" style="grid-column: 1 / -1">
@@ -611,10 +640,13 @@
   let viewYear  = now.getFullYear();
   let viewMonth = now.getMonth();
   let curType   = 'income';
+  let curStatus = 'done';
   let filterMode = 'all';
 
   let transactions = [];
   try { transactions = JSON.parse(localStorage.getItem('fin_v2') || '[]'); } catch(e){}
+  // Migração: transações antigas não tinham campo status
+  transactions = transactions.map(t => ({ status: 'done', ...t }));
 
   function save() {
     try { localStorage.setItem('fin_v2', JSON.stringify(transactions)); } catch(e){}
@@ -637,7 +669,7 @@
       {type:'expense',desc:'Curso online',val:150,cat:'Educação',date:d(2)},
       {type:'expense',desc:'Restaurante',val:130,cat:'Alimentação',date:d(16)},
     ];
-    seed.forEach((t,i) => transactions.push({...t, id: Date.now()+i}));
+    seed.forEach((t,i) => transactions.push({...t, status: 'done', id: Date.now()+i}));
     // meses anteriores
     for (let i=1; i<=5; i++) {
       let pm = m-i, py = y;
@@ -648,7 +680,7 @@
         {type:'expense',desc:'Aluguel',val:1200,cat:'Moradia',date:pd(7)},
         {type:'expense',desc:'Mercado',val:350+Math.round(Math.random()*200),cat:'Alimentação',date:pd(10)},
         {type:'expense',desc:'Transporte',val:140+Math.round(Math.random()*80),cat:'Transporte',date:pd(12)},
-      ].forEach((t,j) => transactions.push({...t, id: Date.now()+i*100+j}));
+      ].forEach((t,j) => transactions.push({...t, status: 'done', id: Date.now()+i*100+j}));
     }
     save();
   }
@@ -695,7 +727,18 @@
     const cats = t === 'income' ? CAT_INC : CAT_EXP;
     const sel = document.getElementById('f-cat');
     sel.innerHTML = cats.map(c => `<option>${c}</option>`).join('');
+    const isIncome = t === 'income';
+    document.getElementById('st-done').textContent    = isIncome ? '✅ Recebido'  : '✅ Pago';
+    document.getElementById('st-pending').textContent = isIncome ? '⏳ A receber' : '⏳ A pagar';
+    setStatus('done');
   }
+
+  function setStatus(s) {
+    curStatus = s;
+    document.getElementById('st-done').className    = 'status-btn' + (s==='done'    ? ' active done'    : '');
+    document.getElementById('st-pending').className = 'status-btn' + (s==='pending' ? ' active pending' : '');
+  }
+
   function setFilter(f, el) {
     filterMode = f;
     document.querySelectorAll('.chip').forEach(b => b.classList.remove('active'));
@@ -710,10 +753,11 @@
     const cat  = document.getElementById('f-cat').value;
     const date = document.getElementById('f-date').value;
     if (!desc || !val || val <= 0 || !date) { showToast('Preencha todos os campos'); return; }
-    transactions.push({ id: Date.now(), type: curType, desc, val, cat, date });
+    transactions.push({ id: Date.now(), type: curType, desc, val, cat, date, status: curStatus });
     save();
     document.getElementById('f-desc').value = '';
     document.getElementById('f-val').value  = '';
+    setStatus('done');
     showToast('Transação adicionada!');
     render();
     goTo('tx');
@@ -723,8 +767,20 @@
     transactions = transactions.filter(t => t.id !== id);
     save();
     render();
-    renderTransactions();
     showToast('Transação removida');
+  }
+
+  /* ─── Alternar status pago/pendente sem apagar a transação ─── */
+  function toggleStatus(id) {
+    const t = transactions.find(x => x.id === id);
+    if (!t) return;
+    t.status = t.status === 'pending' ? 'done' : 'pending';
+    save();
+    render();
+    const msg = t.status === 'done'
+      ? (t.type === 'income' ? '✅ Marcado como recebido' : '✅ Marcado como pago')
+      : '⏳ Marcado como pendente';
+    showToast(msg);
   }
 
   /* ─── Render ─── */
@@ -795,16 +851,20 @@
 
   function renderTransactions() {
     const txs = getMonthTxs(viewYear, viewMonth)
-      .filter(t => filterMode === 'all' || t.type === filterMode)
+      .filter(t => filterMode === 'all' || (filterMode === 'pending' ? t.status === 'pending' : t.type === filterMode))
       .sort((a,b) => new Date(b.date) - new Date(a.date));
     const el = document.getElementById('tx-list');
     if (!txs.length) { el.innerHTML = '<div class="empty">Nenhuma transação encontrada</div>'; return; }
     const p = n => String(n).padStart(2,'0');
     el.innerHTML = txs.map(t => {
-      const d    = new Date(t.date + 'T00:00:00');
-      const ds   = `${p(d.getDate())}/${p(d.getMonth()+1)}`;
-      const icon = CAT_ICON[t.cat] || '📦';
-      const bg   = t.type === 'income' ? 'var(--green-light)' : 'var(--red-light)';
+      const d        = new Date(t.date + 'T00:00:00');
+      const ds       = `${p(d.getDate())}/${p(d.getMonth()+1)}`;
+      const icon     = CAT_ICON[t.cat] || '📦';
+      const bg       = t.type === 'income' ? 'var(--green-light)' : 'var(--red-light)';
+      const isIncome = t.type === 'income';
+      const isDone   = t.status !== 'pending';
+      const stLabel  = isDone ? (isIncome ? 'Recebido' : 'Pago') : (isIncome ? 'A receber' : 'A pagar');
+      const stClass  = isDone ? 'done' : ('pending ' + (isIncome ? 'inc' : 'exp'));
       return `<div class="tx-item">
         <div class="tx-icon" style="background:${bg}">${icon}</div>
         <div class="tx-info">
@@ -815,6 +875,7 @@
           <div class="tx-amount ${t.type==='income'?'inc':'exp'}">${t.type==='income'?'+':'−'}${fmtBRL(t.val)}</div>
           <div class="tx-date">${ds}</div>
         </div>
+        <button class="tx-status ${stClass}" onclick="toggleStatus(${t.id})" title="Clique para alternar status">${stLabel}</button>
         <button class="tx-del" onclick="deleteTransaction(${t.id})" aria-label="Remover">×</button>
       </div>`;
     }).join('');
